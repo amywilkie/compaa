@@ -19,48 +19,29 @@ class App
 
   main do
     begin
-      start_server_in_background
-
       browser = Watir::Browser.new
       browser.window.resize_to 1368, 1200
 
-      Compaa::DifferenceImage.all.each do |difference_image|
-        browser.goto "http://localhost:#{PORT}/?filepath=#{difference_image.path}"
-        puts "Comparing: #{difference_image.path}"
-        puts "Would you like to make this the reference image?"
+      data = {
+        :diff_images => Compaa::DifferenceImage.all.map(&:path),
+        :new_images  => Compaa::GeneratedImage.all.reject(&:has_reference_image?)
+      }
 
-        difference_image.create_reference_image if screenshot_approved?
+      app = Compaa::RackApp.new(data).app
+
+      Thread.new do
+        Rack::Handler::WEBrick.run app,
+          :Port      => PORT,
+          :Logger    => Compaa::NullObject.new,
+          :AccessLog => [nil, nil]
       end
 
-      Compaa::GeneratedImage.all.each do |generated_image|
-        next if generated_image.has_reference_image?
+      browser.goto "http://localhost:#{PORT}/"
 
-        browser.goto "http://localhost:#{PORT}/#{generated_image.path}"
-        puts "Approving: #{generated_image.path}"
-        puts "Would you like accept this new reference image?"
-        generated_image.create_reference_image if screenshot_approved?
-      end
+      sleep
     ensure
-      shutdown_server
       browser.close
     end
-  end
-
-  def self.start_server_in_background
-    Thread.new do
-      Rack::Handler::WEBrick.run Compaa::RackApp.new.app,
-        :Port      => PORT,
-        :Logger    => Compaa::NullObject.new,
-        :AccessLog => [nil, nil]
-    end
-  end
-
-  def self.shutdown_server
-    Rack::Handler::WEBrick.shutdown
-  end
-
-  def self.screenshot_approved?
-    STDIN.gets.chomp.downcase.start_with? 'y'
   end
 
   version Compaa::VERSION

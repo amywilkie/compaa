@@ -13,26 +13,26 @@ Feature: Generate Rake Artifacts Tasks
       | --version |
     And the banner should document that this app takes no arguments
 
-  Scenario: Compare screenshots and approve
-    Given a sample reference screenshot
-    And a sample generated screenshot
-    And a sample difference screenshot
-    When I run `compaa` interactively
-    And I approve the screenshot
-    Then the new reference screenshot should be the same as the sample generated screenshot
-    And the difference image should have been deleted
+  #Scenario: Compare screenshots and approve
+    #Given a sample reference screenshot
+    #And a sample generated screenshot
+    #And a sample difference screenshot
+    #When I run `compaa` interactively
+    #And I approve the screenshot
+    #Then the new reference screenshot should be the same as the sample generated screenshot
+    #And the difference image should have been deleted
 
-  Scenario: Compare screenshots and reject
-    Given a sample reference screenshot
-    And a sample generated screenshot
-    And a sample difference screenshot
-    When I run `compaa` interactively
-    And I reject the screenshot
-    Then the new reference screenshot should be the same as the original reference screenshot
+  #Scenario: Compare screenshots and reject
+    #Given a sample reference screenshot
+    #And a sample generated screenshot
+    #And a sample difference screenshot
+    #When I run `compaa` interactively
+    #And I reject the screenshot
+    #Then the new reference screenshot should be the same as the original reference screenshot
 
-	Scenario: Generated images without corresponding reference images require approval
-    Given a sample generated screenshot
-		And no reference images or difference images
-    When I run `compaa` interactively
-    And I approve the screenshot
-    Then the new reference screenshot should be the same as the sample generated screenshot
+	#Scenario: Generated images without corresponding reference images require approval
+    #Given a sample generated screenshot
+		#And no reference images or difference images
+    #When I run `compaa` interactively
+    #And I approve the screenshot
+    #Then the new reference screenshot should be the same as the sample generated screenshot

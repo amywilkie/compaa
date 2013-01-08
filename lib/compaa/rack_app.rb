@@ -1,5 +1,6 @@
 require 'rack'
 require 'haml'
+require 'json'
 
 module Compaa
   class RackApp
@@ -7,9 +8,14 @@ module Compaa
 
     DEFAULT_ROOT = Dir.pwd
 
+    def initialize data
+      @data = data
+    end
+
     def app
       template = File.read File.expand_path 'template.haml', File.dirname(__FILE__)
       root     = @root_directory or DEFAULT_ROOT
+      data     = @data
 
       Rack::Builder.new do
         use Rack::Static, :urls => ['/artifacts'], :root => root
@@ -18,7 +24,7 @@ module Compaa
           request = Rack::Request.new env
 
           if request.path == '/' and request.params.has_key? 'filepath'
-            locals = { :filepath => request.params['filepath'] }
+            locals = { :filepath => request.params['filepath'], :data => data }
             body   = Haml::Engine.new(template).render Object.new, locals
 
             [ 200, { 'Content-Type' => 'text/html' }, [body] ]

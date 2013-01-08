@@ -33,4 +33,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'haml'
   gem.add_dependency 'watir-webdriver'
   gem.add_dependency 'rack'
+  gem.add_dependency 'json'
 end
